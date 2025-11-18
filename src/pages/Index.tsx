@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, Leaf, Users, ArrowRight, TrendingUp, Shield, Package, BarChart3 } from "lucide-react";
+import { Heart, Leaf, Users, ArrowRight, TrendingUp, Shield, Package, BarChart3, MapPin, Bell, MessageCircle, Navigation } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDonations } from "@/hooks/use-donations";
 import { StatsCard } from "@/components/StatsCard";
@@ -141,6 +141,69 @@ const Index = () => {
               </div>
               <h3 className="mb-3 text-xl font-semibold text-foreground">{item.title}</h3>
               <p className="text-muted-foreground">{item.description}</p>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Key Features */}
+      <section className="container mx-auto px-4 py-20 bg-muted/30">
+        <div className="mx-auto max-w-3xl text-center mb-12">
+          <h2 className="mb-4 text-4xl font-bold text-foreground">Platform Features</h2>
+          <p className="text-lg text-muted-foreground">
+            Everything you need to fight food waste efficiently
+          </p>
+        </div>
+
+        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              icon: MapPin,
+              title: "Interactive Map View",
+              description: "Visualize donation locations on a map to easily find nearby food donations",
+              color: "primary",
+            },
+            {
+              icon: Bell,
+              title: "Smart Notifications",
+              description: "Get instant alerts when new donations are posted in your area",
+              color: "secondary",
+            },
+            {
+              icon: Shield,
+              title: "Verification System",
+              description: "Trust badges and ratings for donors and NGOs to build confidence",
+              color: "accent",
+            },
+            {
+              icon: BarChart3,
+              title: "Analytics Dashboard",
+              description: "Track impact metrics, trends, and statistics with interactive charts",
+              color: "primary",
+            },
+            {
+              icon: MessageCircle,
+              title: "WhatsApp Integration",
+              description: "Quick coordination with donors via WhatsApp for seamless pickups",
+              color: "secondary",
+            },
+            {
+              icon: Navigation,
+              title: "Geolocation Support",
+              description: "Automatic location capture for easy donation listing and mapping",
+              color: "accent",
+            },
+          ].map((feature, i) => (
+            <Card 
+              key={i} 
+              className="group p-6 transition-all hover:scale-105 hover:shadow-xl border-2 hover:border-primary/40 animate-fade-in"
+              style={{ animationDelay: `${i * 100}ms` }}
+            >
+              <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-${feature.color}/10 transition-all group-hover:scale-110`}>
+                <feature.icon className={`h-6 w-6 text-${feature.color}`} />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-foreground">{feature.title}</h3>
+              <p className="text-sm text-muted-foreground">{feature.description}</p>
             </Card>
           ))}
         </div>

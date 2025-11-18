@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { MapPin, Clock, Package, Phone, Upload, Image as ImageIcon } from "lucide-react";
+import { MapPin, Clock, Package, Phone, Upload, Image as ImageIcon, Navigation } from "lucide-react";
 import { toast } from "sonner";
+import { useNotifications } from "@/hooks/use-notifications";
 
 interface DonationFormData {
   foodType: string;
@@ -32,6 +33,8 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
     imageUrl: "",
   });
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const { getLocation } = useNotifications();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -77,6 +80,21 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
   };
 
   const prevStep = () => setStep(step - 1);
+
+  const handleGetLocation = async () => {
+    setIsGettingLocation(true);
+    try {
+      const position = await getLocation();
+      // Reverse geocode using a simple API (for demo purposes, using a placeholder)
+      const locationString = `${position.lat.toFixed(4)}, ${position.lng.toFixed(4)}`;
+      setFormData({ ...formData, location: locationString });
+      toast.success("Location captured successfully!");
+    } catch (error) {
+      toast.error("Unable to get location. Please enter manually.");
+    } finally {
+      setIsGettingLocation(false);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -190,15 +208,27 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
               <MapPin className="h-4 w-4 text-primary" />
               Pickup Location *
             </Label>
-            <Input
-              id="location"
-              name="location"
-              placeholder="Full address with landmark"
-              value={formData.location}
-              onChange={handleChange}
-              className="border-primary/20 focus:border-primary transition-all"
-              required
-            />
+            <div className="flex gap-2">
+              <Input
+                id="location"
+                name="location"
+                placeholder="Full address with landmark"
+                value={formData.location}
+                onChange={handleChange}
+                className="border-primary/20 focus:border-primary transition-all flex-1"
+                required
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleGetLocation}
+                disabled={isGettingLocation}
+                className="gap-2 shrink-0 transition-all hover:scale-105"
+              >
+                <Navigation className={`h-4 w-4 ${isGettingLocation ? 'animate-spin' : ''}`} />
+                {isGettingLocation ? 'Getting...' : 'Use Location'}
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-2">

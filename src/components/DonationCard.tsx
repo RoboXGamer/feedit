@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Clock, Package, Phone, CheckCircle, Star, ImageIcon } from "lucide-react";
+import { MapPin, Clock, Package, Phone, CheckCircle, Star, ImageIcon, MessageCircle } from "lucide-react";
 import { Donation } from "@/hooks/use-donations";
 import { VerificationBadge } from "@/components/VerificationBadge";
 
@@ -140,6 +140,18 @@ export const DonationCard = ({ donation, onClaim, isClaimed, onRate }: DonationC
                   {donation.contact}
                 </p>
               </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full gap-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10 transition-all hover:scale-105"
+                onClick={() => {
+                  const message = encodeURIComponent(`Hi! I claimed your food donation: ${donation.foodType}. When can I pick it up?`);
+                  window.open(`https://wa.me/${donation.contact.replace(/\D/g, '')}?text=${message}`, '_blank');
+                }}
+              >
+                <MessageCircle className="h-4 w-4" />
+                Chat on WhatsApp
+              </Button>
               {showRatingStars && (
                 <div className="rounded-lg border border-secondary/20 bg-secondary/5 p-3 animate-fade-in">
                   <p className="text-xs text-center text-muted-foreground mb-2">Rate this donor</p>

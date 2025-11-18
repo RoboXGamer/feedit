@@ -30,7 +30,7 @@ const Index = () => {
             </h1>
             
             <p className="mb-8 text-xl text-muted-foreground md:text-2xl">
-              Connecting surplus food with those who need it most. Every meal saved is a life touched.
+              Your Extra Food Could Be Someone's Only Meal.
             </p>
             
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">

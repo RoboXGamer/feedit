@@ -6,6 +6,7 @@ import { useDonations } from "@/hooks/use-donations";
 import { StatsCard } from "@/components/StatsCard";
 import { RecentDonations } from "@/components/RecentDonations";
 import { NotificationPrompt } from "@/components/NotificationPrompt";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-muted/30 to-background">
+      {/* Theme Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+      
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-secondary/5 to-transparent" />

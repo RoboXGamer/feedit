@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Clock, Package, Phone, CheckCircle } from "lucide-react";
+import { MapPin, Clock, Package, Phone, CheckCircle, Star, ImageIcon } from "lucide-react";
 import { Donation } from "@/hooks/use-donations";
 import { VerificationBadge } from "@/components/VerificationBadge";
 
@@ -10,16 +10,27 @@ interface DonationCardProps {
   donation: Donation;
   onClaim: (id: string) => void;
   isClaimed: boolean;
+  onRate?: (id: string, rating: number, comment: string) => void;
 }
 
-export const DonationCard = ({ donation, onClaim, isClaimed }: DonationCardProps) => {
+export const DonationCard = ({ donation, onClaim, isClaimed, onRate }: DonationCardProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showRatingStars, setShowRatingStars] = useState(false);
+  const [hoveredRating, setHoveredRating] = useState(0);
 
   const handleClaim = () => {
     setIsAnimating(true);
     setTimeout(() => {
       onClaim(donation.id);
+      setShowRatingStars(true);
     }, 500);
+  };
+
+  const handleRating = (rating: number) => {
+    if (onRate) {
+      onRate(donation.id, rating, "");
+      setShowRatingStars(false);
+    }
   };
 
   const timeAgo = (dateString: string) => {
@@ -44,12 +55,16 @@ export const DonationCard = ({ donation, onClaim, isClaimed }: DonationCardProps
     >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex-1 space-y-4">
-          {donation.imageUrl && (
+          {donation.imageUrl ? (
             <img
               src={donation.imageUrl}
               alt={donation.foodType}
               className="h-48 w-full object-cover rounded-lg border-2 border-primary/10 transition-transform hover:scale-105"
             />
+          ) : (
+            <div className="h-48 w-full flex items-center justify-center bg-muted rounded-lg border-2 border-primary/10">
+              <ImageIcon className="h-16 w-16 text-muted-foreground" />
+            </div>
           )}
           
           <div className="flex items-start justify-between">
@@ -125,6 +140,31 @@ export const DonationCard = ({ donation, onClaim, isClaimed }: DonationCardProps
                   {donation.contact}
                 </p>
               </div>
+              {showRatingStars && (
+                <div className="rounded-lg border border-secondary/20 bg-secondary/5 p-3 animate-fade-in">
+                  <p className="text-xs text-center text-muted-foreground mb-2">Rate this donor</p>
+                  <div className="flex gap-1 justify-center">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => handleRating(star)}
+                        onMouseEnter={() => setHoveredRating(star)}
+                        onMouseLeave={() => setHoveredRating(0)}
+                        className="transition-transform hover:scale-110"
+                      >
+                        <Star
+                          className={`h-6 w-6 ${
+                            star <= hoveredRating
+                              ? "fill-primary text-primary"
+                              : "text-muted-foreground"
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <Button

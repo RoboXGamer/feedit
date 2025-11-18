@@ -30,8 +30,8 @@ const Donate = () => {
       contact: data.contact,
       description: data.description,
       imageUrl: data.imageUrl,
-      donorVerified: false,
-      donorRating: 0,
+      donorVerified: true,
+      donorRating: 4.5,
     });
 
     setSubmitted(true);

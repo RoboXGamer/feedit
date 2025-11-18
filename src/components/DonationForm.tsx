@@ -82,32 +82,36 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Progress Indicator */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          {[1, 2, 3].map((s) => (
-            <div key={s} className="flex items-center flex-1">
-              <div
-                className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
-                  step >= s
-                    ? "border-primary bg-primary text-primary-foreground scale-110"
-                    : "border-muted bg-muted text-muted-foreground"
-                }`}
-              >
-                {s}
-              </div>
-              {s < 3 && (
+        <div className="flex items-start justify-between gap-4">
+          {[
+            { step: 1, label: "Food Details" },
+            { step: 2, label: "Pickup Info" },
+            { step: 3, label: "Review" }
+          ].map((item, index) => (
+            <div key={item.step} className="flex flex-col items-center flex-1">
+              <div className="flex items-center w-full">
                 <div
-                  className={`h-1 flex-1 mx-2 transition-all duration-300 ${
-                    step > s ? "bg-primary" : "bg-muted"
+                  className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                    step >= item.step
+                      ? "border-primary bg-primary text-primary-foreground scale-110"
+                      : "border-muted bg-muted text-muted-foreground"
                   }`}
-                />
-              )}
+                >
+                  {item.step}
+                </div>
+                {index < 2 && (
+                  <div
+                    className={`h-1 flex-1 mx-2 transition-all duration-300 ${
+                      step > item.step ? "bg-primary" : "bg-muted"
+                    }`}
+                  />
+                )}
+              </div>
+              <span className="mt-2 text-sm text-muted-foreground text-center">
+                {item.label}
+              </span>
             </div>
           ))}
-        </div>
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>Food Details</span>
-          <span>Pickup Info</span>
-          <span>Review</span>
         </div>
       </div>
 

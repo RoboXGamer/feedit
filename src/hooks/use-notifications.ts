@@ -1,38 +1,44 @@
-import { useEffect, useState } from "react";
-
 export const useNotifications = () => {
-  const [permission, setPermission] = useState<NotificationPermission>("default");
-  const [locationPermission, setLocationPermission] = useState<"granted" | "denied" | "prompt">("prompt");
-
-  useEffect(() => {
+  const getPermission = () => {
     if ("Notification" in window) {
-      setPermission(Notification.permission);
+      return Notification.permission;
     }
-    
-    // Check geolocation permission
-    if ("geolocation" in navigator && "permissions" in navigator) {
-      navigator.permissions.query({ name: "geolocation" }).then((result) => {
-        setLocationPermission(result.state as "granted" | "denied" | "prompt");
-      });
-    }
-  }, []);
+    return "default";
+  };
 
   const requestPermission = async () => {
     if ("Notification" in window) {
       const result = await Notification.requestPermission();
-      setPermission(result);
       
       // Also request location permission
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
-          () => setLocationPermission("granted"),
-          () => setLocationPermission("denied")
+          () => console.log("Location permission granted"),
+          () => console.log("Location permission denied")
         );
       }
       
       return result === "granted";
     }
     return false;
+  };
+
+  const getLocation = () => {
+    return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+          },
+          (error) => reject(error)
+        );
+      } else {
+        reject(new Error("Geolocation not supported"));
+      }
+    });
   };
 
   const sendNotification = (title: string, body: string) => {
@@ -46,9 +52,9 @@ export const useNotifications = () => {
   };
 
   return {
-    permission,
-    locationPermission,
+    permission: getPermission(),
     requestPermission,
     sendNotification,
+    getLocation,
   };
 };

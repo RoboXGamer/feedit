@@ -2,11 +2,25 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Bell, X } from "lucide-react";
-import { useNotifications } from "@/hooks/use-notifications";
 
 export const NotificationPrompt = () => {
   const [show, setShow] = useState(false);
-  const { requestPermission } = useNotifications();
+
+  const requestPermission = async () => {
+    if ("Notification" in window) {
+      const result = await Notification.requestPermission();
+      
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          () => console.log("Location granted"),
+          () => console.log("Location denied")
+        );
+      }
+      
+      return result === "granted";
+    }
+    return false;
+  };
 
   useEffect(() => {
     // Show prompt if notifications not enabled and not dismissed

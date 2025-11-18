@@ -50,5 +50,3 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 - Leaflet (for maps)
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)

@@ -117,7 +117,7 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
 
       {/* Step 1: Food Details */}
       {step === 1 && (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-6 animate-fade-in" style={{ animationDuration: "0.5s" }}>
           <div className="space-y-2">
             <Label htmlFor="foodType" className="flex items-center gap-2 text-base">
               <Package className="h-4 w-4 text-primary" />
@@ -182,9 +182,9 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
         </div>
       )}
 
-      {/* Step 2: Pickup Details */}
+      {/* Step 2: Pickup Information */}
       {step === 2 && (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-6 animate-fade-in" style={{ animationDuration: "0.5s" }}>
           <div className="space-y-2">
             <Label htmlFor="location" className="flex items-center gap-2 text-base">
               <MapPin className="h-4 w-4 text-primary" />
@@ -250,7 +250,7 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
 
       {/* Step 3: Review & Submit */}
       {step === 3 && (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-6 animate-fade-in" style={{ animationDuration: "0.5s" }}>
           <div className="space-y-2">
             <Label htmlFor="description" className="text-base">
               Additional Details (Optional)

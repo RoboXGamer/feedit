@@ -1,12 +1,39 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const useNotifications = () => {
+  const [permission, setPermission] = useState<NotificationPermission>("default");
+  const [locationPermission, setLocationPermission] = useState<"granted" | "denied" | "prompt">("prompt");
+
   useEffect(() => {
-    // Request notification permission on mount
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission();
+    if ("Notification" in window) {
+      setPermission(Notification.permission);
+    }
+    
+    // Check geolocation permission
+    if ("geolocation" in navigator && "permissions" in navigator) {
+      navigator.permissions.query({ name: "geolocation" }).then((result) => {
+        setLocationPermission(result.state as "granted" | "denied" | "prompt");
+      });
     }
   }, []);
+
+  const requestPermission = async () => {
+    if ("Notification" in window) {
+      const result = await Notification.requestPermission();
+      setPermission(result);
+      
+      // Also request location permission
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          () => setLocationPermission("granted"),
+          () => setLocationPermission("denied")
+        );
+      }
+      
+      return result === "granted";
+    }
+    return false;
+  };
 
   const sendNotification = (title: string, body: string) => {
     if ("Notification" in window && Notification.permission === "granted") {
@@ -18,13 +45,10 @@ export const useNotifications = () => {
     }
   };
 
-  const requestPermission = async () => {
-    if ("Notification" in window) {
-      const permission = await Notification.requestPermission();
-      return permission === "granted";
-    }
-    return false;
+  return {
+    permission,
+    locationPermission,
+    requestPermission,
+    sendNotification,
   };
-
-  return { sendNotification, requestPermission };
 };

@@ -26,6 +26,22 @@ const Receive = () => {
     toast.success(`Claimed successfully! Contact: ${donation?.contact}`);
   };
 
+  const handleRating = (id: string, rating: number, comment: string) => {
+    // Store rating in localStorage
+    const donationsData = localStorage.getItem("food_donations");
+    if (donationsData) {
+      const allDonations = JSON.parse(donationsData);
+      const updatedDonations = allDonations.map((d: any) => {
+        if (d.id === id) {
+          return { ...d, donorRating: rating };
+        }
+        return d;
+      });
+      localStorage.setItem("food_donations", JSON.stringify(updatedDonations));
+      toast.success("Thank you for your rating!");
+    }
+  };
+
   const filteredDonations = useMemo(() => {
     let filtered = donations.filter(
       (donation) =>
@@ -127,6 +143,7 @@ const Receive = () => {
                       donation={donation}
                       onClaim={handleClaim}
                       isClaimed={claimedIds.includes(donation.id) || donation.status === "claimed"}
+                      onRate={handleRating}
                     />
                   </div>
                 ))

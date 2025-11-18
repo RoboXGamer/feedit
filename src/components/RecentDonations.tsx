@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, MapPin, Package } from "lucide-react";
+import { Clock, MapPin, Package, ImageIcon } from "lucide-react";
 import { Donation } from "@/hooks/use-donations";
 import { useNavigate } from "react-router-dom";
 
@@ -43,12 +43,16 @@ export const RecentDonations = ({ donations }: RecentDonationsProps) => {
               style={{ animationDelay: `${idx * 100}ms` }}
               onClick={() => navigate('/receive')}
             >
-              {donation.imageUrl && (
+              {donation.imageUrl ? (
                 <img
                   src={donation.imageUrl}
                   alt={donation.foodType}
                   className="h-32 w-full object-cover rounded-lg mb-3"
                 />
+              ) : (
+                <div className="h-32 w-full flex items-center justify-center bg-muted rounded-lg mb-3">
+                  <ImageIcon className="h-12 w-12 text-muted-foreground" />
+                </div>
               )}
               
               <h3 className="font-bold text-lg text-foreground mb-2">

@@ -42,8 +42,8 @@ const Analytics = () => {
   }, [donations]);
 
   const avgRating = useMemo(() => {
-    const rated = donations.filter((d) => d.donorRating);
-    if (rated.length === 0) return 0;
+    const rated = donations.filter((d) => d.donorRating && d.donorRating > 0);
+    if (rated.length === 0) return "N/A";
     return (rated.reduce((sum, d) => sum + (d.donorRating || 0), 0) / rated.length).toFixed(1);
   }, [donations]);
 

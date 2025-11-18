@@ -1,65 +1,50 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { ArrowLeft, MapPin, Clock, Package, Phone, Search, AlertCircle } from "lucide-react";
+import { ArrowLeft, Package, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
-
-// Mock data for available donations
-const mockDonations = [
-  {
-    id: 1,
-    foodType: "Rice & Dal (North Indian)",
-    quantity: "50 meals",
-    location: "IIT Delhi Hostel Mess, Hauz Khas",
-    pickupBy: "Today, 8:00 PM",
-    contact: "+91 98765 43210",
-    description: "Freshly cooked, vegetarian. Containers available.",
-    status: "available",
-    postedAt: "30 mins ago",
-  },
-  {
-    id: 2,
-    foodType: "Sandwiches & Juice",
-    quantity: "100 portions",
-    location: "Office Cafeteria, Cyber City, Gurgaon",
-    pickupBy: "Today, 7:30 PM",
-    contact: "+91 98123 45678",
-    description: "Veg & non-veg options. Packed individually.",
-    status: "available",
-    postedAt: "1 hour ago",
-  },
-  {
-    id: 3,
-    foodType: "Fresh Fruits & Salads",
-    quantity: "20 kg",
-    location: "Wholesale Market, Azadpur",
-    pickupBy: "Tomorrow, 9:00 AM",
-    contact: "+91 99887 76655",
-    description: "Seasonal fruits, slightly overripe but edible.",
-    status: "available",
-    postedAt: "2 hours ago",
-  },
-];
+import { useDonations } from "@/hooks/use-donations";
+import { DonationFilters } from "@/components/DonationFilters";
+import { DonationCard } from "@/components/DonationCard";
 
 const Receive = () => {
   const navigate = useNavigate();
-  const [donations] = useState(mockDonations);
+  const { donations, claimDonation } = useDonations();
   const [searchQuery, setSearchQuery] = useState("");
-  const [claimedIds, setClaimedIds] = useState<number[]>([]);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
+  const [claimedIds, setClaimedIds] = useState<string[]>([]);
 
-  const handleClaim = (id: number, contact: string) => {
+  const handleClaim = (id: string) => {
+    claimDonation(id, "NGO User");
     setClaimedIds([...claimedIds, id]);
-    toast.success(`Claimed successfully! Contact: ${contact}`);
+    const donation = donations.find(d => d.id === id);
+    toast.success(`Claimed successfully! Contact: ${donation?.contact}`);
   };
 
-  const filteredDonations = donations.filter(
-    (donation) =>
-      donation.foodType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      donation.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredDonations = useMemo(() => {
+    let filtered = donations.filter(
+      (donation) =>
+        (donation.foodType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        donation.location.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        (statusFilter === "all" || donation.status === statusFilter)
+    );
+
+    // Sort
+    filtered.sort((a, b) => {
+      if (sortBy === "newest") {
+        return new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime();
+      } else if (sortBy === "oldest") {
+        return new Date(a.postedAt).getTime() - new Date(b.postedAt).getTime();
+      } else if (sortBy === "expiring") {
+        return new Date(a.pickupBy).getTime() - new Date(b.pickupBy).getTime();
+      }
+      return 0;
+    });
+
+    return filtered;
+  }, [donations, searchQuery, statusFilter, sortBy]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
@@ -81,18 +66,16 @@ const Receive = () => {
             </p>
           </div>
 
-          {/* Search Bar */}
+          {/* Filters */}
           <div className="mb-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search by food type or location..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="border-primary/20 pl-10 focus:border-primary h-12 text-base"
-              />
-            </div>
+            <DonationFilters
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              statusFilter={statusFilter}
+              onStatusChange={setStatusFilter}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+            />
           </div>
 
           {/* Info Banner */}
@@ -119,87 +102,19 @@ const Receive = () => {
                 </p>
               </Card>
             ) : (
-              filteredDonations.map((donation) => {
-                const isClaimed = claimedIds.includes(donation.id);
-                
-                return (
-                  <Card 
-                    key={donation.id} 
-                    className={`border-2 p-6 transition-all hover:shadow-lg ${
-                      isClaimed 
-                        ? 'border-muted bg-muted/30' 
-                        : 'border-primary/20 bg-card/50 backdrop-blur-sm hover:border-primary/40'
-                    }`}
-                  >
-                    <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                      <div className="flex-1 space-y-4">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="mb-2 text-2xl font-bold text-foreground">
-                              {donation.foodType}
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                              <Badge variant="secondary" className="gap-1">
-                                <Package className="h-3 w-3" />
-                                {donation.quantity}
-                              </Badge>
-                              <Badge variant="outline" className="text-muted-foreground">
-                                {donation.postedAt}
-                              </Badge>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-3">
-                          <div className="flex items-start gap-3">
-                            <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                            <p className="text-foreground">{donation.location}</p>
-                          </div>
-
-                          <div className="flex items-start gap-3">
-                            <Clock className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
-                            <div>
-                              <p className="font-medium text-foreground">Pickup by: {donation.pickupBy}</p>
-                              <p className="text-sm text-muted-foreground">Please collect before this time</p>
-                            </div>
-                          </div>
-
-                          {donation.description && (
-                            <div className="rounded-lg border border-primary/10 bg-primary/5 p-3">
-                              <p className="text-sm text-foreground">{donation.description}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-3 lg:w-48">
-                        {isClaimed ? (
-                          <>
-                            <Badge className="w-full justify-center bg-primary text-primary-foreground py-2">
-                              Claimed ✓
-                            </Badge>
-                            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-center">
-                              <Phone className="mx-auto mb-1 h-4 w-4 text-primary" />
-                              <p className="text-xs text-muted-foreground mb-1">Contact:</p>
-                              <p className="font-mono text-sm font-medium text-foreground">
-                                {donation.contact}
-                              </p>
-                            </div>
-                          </>
-                        ) : (
-                          <Button
-                            size="lg"
-                            className="w-full h-12 shadow-md transition-all hover:scale-105"
-                            onClick={() => handleClaim(donation.id, donation.contact)}
-                          >
-                            Claim Donation
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })
+              filteredDonations.map((donation, idx) => (
+                <div 
+                  key={donation.id}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${idx * 100}ms` }}
+                >
+                  <DonationCard
+                    donation={donation}
+                    onClaim={handleClaim}
+                    isClaimed={claimedIds.includes(donation.id) || donation.status === "claimed"}
+                  />
+                </div>
+              ))
             )}
           </div>
         </div>

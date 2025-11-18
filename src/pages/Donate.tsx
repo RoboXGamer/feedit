@@ -1,64 +1,52 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, MapPin, Clock, Package, Phone, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useDonations } from "@/hooks/use-donations";
+import { DonationForm } from "@/components/DonationForm";
 
 const Donate = () => {
   const navigate = useNavigate();
+  const { addDonation } = useDonations();
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    foodType: "",
-    quantity: "",
-    location: "",
-    pickupTime: "",
-    contact: "",
-    description: "",
-  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validation
-    if (!formData.foodType || !formData.quantity || !formData.location || !formData.pickupTime || !formData.contact) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
+  const handleSubmit = (data: any) => {
+    addDonation({
+      foodType: data.foodType,
+      quantity: data.quantity,
+      location: data.location,
+      pickupBy: data.pickupBy,
+      contact: data.contact,
+      description: data.description,
+      imageUrl: data.imageUrl,
+    });
 
     setSubmitted(true);
     toast.success("Your donation has been listed! NGOs will be notified.");
     
-    // Reset form after 3 seconds and go back
     setTimeout(() => {
       navigate('/');
     }, 3000);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   if (submitted) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full p-8 text-center border-2 border-primary/20 bg-card/80 backdrop-blur-sm">
-          <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 mx-auto">
+        <Card className="max-w-md w-full p-8 text-center border-2 border-primary/20 bg-card/80 backdrop-blur-sm animate-scale-in">
+          <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 mx-auto animate-pulse">
             <CheckCircle className="h-10 w-10 text-primary" />
           </div>
-          <h2 className="text-3xl font-bold text-foreground mb-4">Donation Listed!</h2>
-          <p className="text-muted-foreground mb-6">
+          <Sparkles className="h-8 w-8 text-secondary mx-auto mb-4 animate-bounce" />
+          <h2 className="text-3xl font-bold text-foreground mb-4 animate-fade-in">Donation Listed!</h2>
+          <p className="text-muted-foreground mb-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
             Thank you for your contribution. NGOs in your area have been notified and will contact you shortly.
           </p>
           <Button 
             onClick={() => navigate('/')}
-            className="w-full"
+            className="w-full animate-fade-in"
+            style={{ animationDelay: '400ms' }}
           >
             Back to Home
           </Button>
@@ -87,121 +75,8 @@ const Donate = () => {
             </p>
           </div>
 
-          <Card className="border-2 border-primary/10 bg-card/50 p-8 backdrop-blur-sm">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="foodType" className="flex items-center gap-2 text-base">
-                  <Package className="h-4 w-4 text-primary" />
-                  Type of Food *
-                </Label>
-                <Input
-                  id="foodType"
-                  name="foodType"
-                  placeholder="e.g., Rice & Curry, Sandwiches, Fruits"
-                  value={formData.foodType}
-                  onChange={handleChange}
-                  className="border-primary/20 focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="quantity" className="flex items-center gap-2 text-base">
-                  <Package className="h-4 w-4 text-primary" />
-                  Quantity *
-                </Label>
-                <Input
-                  id="quantity"
-                  name="quantity"
-                  placeholder="e.g., 50 meals, 20kg, 100 portions"
-                  value={formData.quantity}
-                  onChange={handleChange}
-                  className="border-primary/20 focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="location" className="flex items-center gap-2 text-base">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  Pickup Location *
-                </Label>
-                <Input
-                  id="location"
-                  name="location"
-                  placeholder="Full address with landmark"
-                  value={formData.location}
-                  onChange={handleChange}
-                  className="border-primary/20 focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="pickupTime" className="flex items-center gap-2 text-base">
-                  <Clock className="h-4 w-4 text-primary" />
-                  Available Until *
-                </Label>
-                <Input
-                  id="pickupTime"
-                  name="pickupTime"
-                  type="datetime-local"
-                  value={formData.pickupTime}
-                  onChange={handleChange}
-                  className="border-primary/20 focus:border-primary"
-                  required
-                />
-                <p className="text-sm text-muted-foreground">
-                  When should the food be picked up by?
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="contact" className="flex items-center gap-2 text-base">
-                  <Phone className="h-4 w-4 text-primary" />
-                  Contact Number *
-                </Label>
-                <Input
-                  id="contact"
-                  name="contact"
-                  type="tel"
-                  placeholder="+91 XXXXX XXXXX"
-                  value={formData.contact}
-                  onChange={handleChange}
-                  className="border-primary/20 focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-base">
-                  Additional Details (Optional)
-                </Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  placeholder="Any special instructions, dietary info, or packaging details..."
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="min-h-24 border-primary/20 focus:border-primary"
-                />
-              </div>
-
-              <div className="rounded-lg border border-secondary/20 bg-secondary/5 p-4">
-                <p className="text-sm text-muted-foreground">
-                  <strong className="text-foreground">Important:</strong> Please ensure the food is safe, 
-                  fresh, and properly stored. Our verified NGO partners will contact you to coordinate pickup.
-                </p>
-              </div>
-
-              <Button 
-                type="submit" 
-                size="lg"
-                className="w-full h-12 text-lg shadow-lg transition-all hover:scale-105"
-              >
-                List Your Donation
-              </Button>
-            </form>
+          <Card className="border-2 border-primary/10 bg-card/50 p-8 backdrop-blur-sm animate-fade-in">
+            <DonationForm onSubmit={handleSubmit} />
           </Card>
         </div>
       </div>

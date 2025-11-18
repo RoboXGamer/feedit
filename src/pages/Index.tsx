@@ -1,10 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, Leaf, Users, ArrowRight, TrendingUp, Shield } from "lucide-react";
+import { Heart, Leaf, Users, ArrowRight, TrendingUp, Shield, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useDonations } from "@/hooks/use-donations";
+import { StatsCard } from "@/components/StatsCard";
+import { RecentDonations } from "@/components/RecentDonations";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { getStats, getRecentDonations } = useDonations();
+  const stats = getStats();
+  const recentDonations = getRecentDonations(6);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-muted/30 to-background">
@@ -49,19 +55,34 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Stats */}
-          <div className="mt-20 grid gap-8 sm:grid-cols-3">
-            {[
-              { icon: Users, label: "Active NGOs", value: "150+" },
-              { icon: TrendingUp, label: "Meals Saved", value: "50K+" },
-              { icon: Shield, label: "Safe & Verified", value: "100%" },
-            ].map((stat, i) => (
-              <Card key={i} className="border-primary/10 bg-card/50 p-6 text-center backdrop-blur-sm transition-all hover:scale-105 hover:border-primary/30 hover:shadow-lg">
-                <stat.icon className="mx-auto mb-3 h-8 w-8 text-primary" />
-                <div className="text-3xl font-bold text-foreground">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </Card>
-            ))}
+          {/* Live Stats */}
+          <div className="mt-20 grid gap-8 sm:grid-cols-4">
+            <StatsCard 
+              icon={Package} 
+              label="Total Donations" 
+              value={stats.total}
+              delay={0}
+            />
+            <StatsCard 
+              icon={TrendingUp} 
+              label="Available Now" 
+              value={stats.available}
+              trend="Ready for pickup"
+              delay={100}
+            />
+            <StatsCard 
+              icon={Users} 
+              label="Successfully Claimed" 
+              value={stats.claimed}
+              delay={200}
+            />
+            <StatsCard 
+              icon={Shield} 
+              label="Impact Score" 
+              value={`${Math.round((stats.claimed / Math.max(stats.total, 1)) * 100)}%`}
+              trend="Waste reduced"
+              delay={300}
+            />
           </div>
         </div>
       </section>
@@ -157,6 +178,9 @@ const Index = () => {
           </div>
         </Card>
       </section>
+
+      {/* Recent Donations Feed */}
+      <RecentDonations donations={recentDonations} />
     </div>
   );
 };

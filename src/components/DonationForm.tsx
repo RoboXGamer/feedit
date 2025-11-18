@@ -100,36 +100,68 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Progress Indicator */}
       <div className="mb-8">
-        <div className="flex items-start justify-between gap-4">
-          {[
-            { step: 1, label: "Food Details" },
-            { step: 2, label: "Pickup Info" },
-            { step: 3, label: "Review" }
-          ].map((item, index) => (
-            <div key={item.step} className="flex flex-col items-center flex-1">
-              <div className="flex items-center w-full">
-                <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
-                    step >= item.step
-                      ? "border-primary bg-primary text-primary-foreground scale-110"
-                      : "border-muted bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {item.step}
-                </div>
-                {index < 2 && (
-                  <div
-                    className={`h-1 flex-1 mx-2 transition-all duration-300 ${
-                      step > item.step ? "bg-primary" : "bg-muted"
-                    }`}
-                  />
-                )}
-              </div>
-              <span className="mt-2 text-sm text-muted-foreground text-center">
-                {item.label}
-              </span>
+        <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-2">
+          {/* Step 1 */}
+          <div className="flex flex-col items-center">
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                step >= 1
+                  ? "border-primary bg-primary text-primary-foreground scale-110"
+                  : "border-muted bg-muted text-muted-foreground"
+              }`}
+            >
+              1
             </div>
-          ))}
+            <span className="mt-2 text-sm text-muted-foreground text-center whitespace-nowrap">
+              Food Details
+            </span>
+          </div>
+
+          {/* Line 1 */}
+          <div
+            className={`h-1 w-16 transition-all duration-300 ${
+              step > 1 ? "bg-primary" : "bg-muted"
+            }`}
+          />
+
+          {/* Step 2 */}
+          <div className="flex flex-col items-center">
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                step >= 2
+                  ? "border-primary bg-primary text-primary-foreground scale-110"
+                  : "border-muted bg-muted text-muted-foreground"
+              }`}
+            >
+              2
+            </div>
+            <span className="mt-2 text-sm text-muted-foreground text-center whitespace-nowrap">
+              Pickup Info
+            </span>
+          </div>
+
+          {/* Line 2 */}
+          <div
+            className={`h-1 w-16 transition-all duration-300 ${
+              step > 2 ? "bg-primary" : "bg-muted"
+            }`}
+          />
+
+          {/* Step 3 */}
+          <div className="flex flex-col items-center">
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                step >= 3
+                  ? "border-primary bg-primary text-primary-foreground scale-110"
+                  : "border-muted bg-muted text-muted-foreground"
+              }`}
+            >
+              3
+            </div>
+            <span className="mt-2 text-sm text-muted-foreground text-center whitespace-nowrap">
+              Review
+            </span>
+          </div>
         </div>
       </div>
 

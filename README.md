@@ -1,6 +1,8 @@
-# Welcome to your Lovable project
+# Feedit
 
-## Project info
+## About
+
+**Feedit** is a platform connecting food donors with NGOs and volunteers to reduce food waste and feed those in need. Your extra food could be someone's only meal.
 
 **URL**: https://lovable.dev/projects/a0664bd7-6c50-4d57-b9cf-f8f189c09839
 
@@ -50,7 +52,17 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
+## Features
+
+- **Donate Food**: Submit surplus food donations with details, photos, and location
+- **Browse Donations**: NGOs and volunteers can view and claim available food donations
+- **Verification System**: Trust badges and ratings for both donors and NGOs
+- **Analytics Dashboard**: Track impact metrics and food waste reduction statistics
+- **Notifications**: Get alerts for new donations in your area
+- **WhatsApp Integration**: Direct communication between donors and recipients
+- **Geolocation Support**: Automatically capture pickup locations
+
+## Technologies
 
 This project is built with:
 
@@ -59,6 +71,7 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Leaflet (for maps)
 
 ## How can I deploy this project?
 

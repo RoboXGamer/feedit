@@ -11,6 +11,7 @@ interface DonationFormData {
   foodType: string;
   quantity: string;
   location: string;
+  address: string;
   pickupBy: string;
   contact: string;
   description: string;
@@ -27,6 +28,7 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
     foodType: "",
     quantity: "",
     location: "",
+    address: "",
     pickupBy: "",
     contact: "",
     description: "",
@@ -59,7 +61,7 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.foodType || !formData.quantity || !formData.location || !formData.pickupBy || !formData.contact) {
+    if (!formData.foodType || !formData.quantity || !formData.address || !formData.pickupBy || !formData.contact) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -72,7 +74,7 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
       toast.error("Please fill in the food details");
       return;
     }
-    if (step === 2 && (!formData.location || !formData.pickupBy)) {
+    if (step === 2 && (!formData.address || !formData.pickupBy)) {
       toast.error("Please fill in pickup details");
       return;
     }
@@ -236,31 +238,54 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
       {step === 2 && (
         <div className="space-y-6 animate-fade-in" style={{ animationDuration: "0.5s" }}>
           <div className="space-y-2">
-            <Label htmlFor="location" className="flex items-center gap-2 text-base">
+            <Label htmlFor="address" className="flex items-center gap-2 text-base">
               <MapPin className="h-4 w-4 text-primary" />
-              Pickup Location *
+              Pickup Address *
+            </Label>
+            <Input
+              id="address"
+              name="address"
+              placeholder="Full address with landmark (e.g., 123 Main St, Near Central Park)"
+              value={formData.address}
+              onChange={handleChange}
+              className="border-primary/20 focus:border-primary transition-all"
+              required
+            />
+            <p className="text-sm text-muted-foreground">
+              Enter the complete pickup address
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="location" className="flex items-center gap-2 text-base">
+              <Navigation className="h-4 w-4 text-primary" />
+              GPS Coordinates (Optional)
             </Label>
             <div className="flex gap-2">
               <Input
                 id="location"
                 name="location"
-                placeholder="Full address with landmark"
+                placeholder="Auto-filled when you use location"
                 value={formData.location}
                 onChange={handleChange}
                 className="border-primary/20 focus:border-primary transition-all flex-1"
-                required
+                readOnly
               />
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleGetLocation}
                 disabled={isGettingLocation}
-                className="gap-2 shrink-0 transition-all hover:scale-105"
+                className="gap-2 shrink-0 transition-all hover:scale-105 animate-pulse"
+                style={{ animationDuration: isGettingLocation ? '1s' : '2s' }}
               >
                 <Navigation className={`h-4 w-4 ${isGettingLocation ? 'animate-spin' : ''}`} />
                 {isGettingLocation ? 'Getting...' : 'Use Location'}
               </Button>
             </div>
+            <p className="text-sm text-muted-foreground">
+              Click to automatically detect your GPS location for the map
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -332,7 +357,8 @@ export const DonationForm = ({ onSubmit }: DonationFormProps) => {
             <div className="space-y-2 text-sm">
               <p><strong>Food:</strong> {formData.foodType}</p>
               <p><strong>Quantity:</strong> {formData.quantity}</p>
-              <p><strong>Location:</strong> {formData.location}</p>
+              <p><strong>Address:</strong> {formData.address}</p>
+              {formData.location && <p><strong>GPS:</strong> {formData.location}</p>}
               <p><strong>Pickup By:</strong> {new Date(formData.pickupBy).toLocaleString()}</p>
               <p><strong>Contact:</strong> {formData.contact}</p>
               {formData.description && <p><strong>Details:</strong> {formData.description}</p>}

@@ -15,17 +15,23 @@ const Donate = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (data: any) => {
-    // Simple geocoding - in real app would use Geocoding API
-    const mockCoordinates = {
-      lat: 28.6139 + (Math.random() - 0.5) * 0.1,
-      lng: 77.2090 + (Math.random() - 0.5) * 0.1,
-    };
+    // Parse coordinates from location field if available
+    let coordinates = undefined;
+    if (data.location) {
+      const coordMatch = data.location.match(/(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/);
+      if (coordMatch) {
+        coordinates = {
+          lat: parseFloat(coordMatch[1]),
+          lng: parseFloat(coordMatch[2]),
+        };
+      }
+    }
 
     addDonation({
       foodType: data.foodType,
       quantity: data.quantity,
-      location: data.location,
-      coordinates: mockCoordinates,
+      location: data.address, // Use the address field as the main location
+      coordinates,
       pickupBy: data.pickupBy,
       contact: data.contact,
       description: data.description,
@@ -40,7 +46,7 @@ const Donate = () => {
     // Send browser notification
     sendNotification(
       "New Donation Listed!",
-      `${data.foodType} - ${data.quantity} available at ${data.location}`
+      `${data.foodType} - ${data.quantity} available at ${data.address}`
     );
     
     setTimeout(() => {

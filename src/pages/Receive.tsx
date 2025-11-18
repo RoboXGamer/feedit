@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { useDonations } from "@/hooks/use-donations";
 import { DonationFilters } from "@/components/DonationFilters";
 import { DonationCard } from "@/components/DonationCard";
-import { DonationMap } from "@/components/DonationMap";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Map, List } from "lucide-react";
 
@@ -151,7 +150,16 @@ const Receive = () => {
             </TabsContent>
 
             <TabsContent value="map">
-              <DonationMap donations={filteredDonations} onClaimDonation={handleClaim} />
+              <Card className="p-16 text-center border-2 border-dashed border-primary/20">
+                <Map className="mx-auto mb-6 h-24 w-24 text-primary/40" />
+                <h3 className="mb-3 text-2xl font-semibold text-foreground">
+                  Map View Coming Soon
+                </h3>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  We're working on an interactive map to help you visualize donation locations. 
+                  Stay tuned for this exciting feature!
+                </p>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>

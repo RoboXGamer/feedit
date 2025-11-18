@@ -6,25 +6,42 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useDonations } from "@/hooks/use-donations";
 import { DonationForm } from "@/components/DonationForm";
+import { useNotifications } from "@/hooks/use-notifications";
 
 const Donate = () => {
   const navigate = useNavigate();
   const { addDonation } = useDonations();
+  const { sendNotification } = useNotifications();
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (data: any) => {
+    // Simple geocoding - in real app would use Geocoding API
+    const mockCoordinates = {
+      lat: 28.6139 + (Math.random() - 0.5) * 0.1,
+      lng: 77.2090 + (Math.random() - 0.5) * 0.1,
+    };
+
     addDonation({
       foodType: data.foodType,
       quantity: data.quantity,
       location: data.location,
+      coordinates: mockCoordinates,
       pickupBy: data.pickupBy,
       contact: data.contact,
       description: data.description,
       imageUrl: data.imageUrl,
+      donorVerified: false,
+      donorRating: 0,
     });
 
     setSubmitted(true);
     toast.success("Your donation has been listed! NGOs will be notified.");
+    
+    // Send browser notification
+    sendNotification(
+      "New Donation Listed!",
+      `${data.foodType} - ${data.quantity} available at ${data.location}`
+    );
     
     setTimeout(() => {
       navigate('/');

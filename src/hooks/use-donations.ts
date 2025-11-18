@@ -5,6 +5,7 @@ export interface Donation {
   foodType: string;
   quantity: string;
   location: string;
+  coordinates?: { lat: number; lng: number };
   pickupBy: string;
   contact: string;
   description?: string;
@@ -13,6 +14,9 @@ export interface Donation {
   postedAt: string;
   claimedBy?: string;
   claimedAt?: string;
+  donorRating?: number;
+  donorVerified?: boolean;
+  reviews?: { rating: number; comment: string; reviewedAt: string }[];
 }
 
 const STORAGE_KEY = "food_donations";

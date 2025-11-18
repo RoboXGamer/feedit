@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Clock, Package, Phone, CheckCircle } from "lucide-react";
 import { Donation } from "@/hooks/use-donations";
+import { VerificationBadge } from "@/components/VerificationBadge";
 
 interface DonationCardProps {
   donation: Donation;
@@ -56,6 +57,12 @@ export const DonationCard = ({ donation, onClaim, isClaimed }: DonationCardProps
               <h3 className="mb-2 text-2xl font-bold text-foreground">
                 {donation.foodType}
               </h3>
+              <div className="mb-2">
+                <VerificationBadge 
+                  verified={donation.donorVerified} 
+                  rating={donation.donorRating} 
+                />
+              </div>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="secondary" className="gap-1">
                   <Package className="h-3 w-3" />

@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, Leaf, Users, ArrowRight, TrendingUp, Shield, Package } from "lucide-react";
+import { Heart, Leaf, Users, ArrowRight, TrendingUp, Shield, Package, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDonations } from "@/hooks/use-donations";
 import { StatsCard } from "@/components/StatsCard";
 import { RecentDonations } from "@/components/RecentDonations";
+import { NotificationPrompt } from "@/components/NotificationPrompt";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -51,6 +52,16 @@ const Index = () => {
               >
                 Receive Donations
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="group h-14 gap-2 border-2 border-secondary/20 bg-background/50 text-lg backdrop-blur-sm transition-all hover:border-secondary hover:bg-secondary/5 hover:scale-105"
+                onClick={() => navigate('/analytics')}
+              >
+                View Analytics
+                <BarChart3 className="h-5 w-5 transition-transform group-hover:scale-110" />
               </Button>
             </div>
           </div>
@@ -181,6 +192,9 @@ const Index = () => {
 
       {/* Recent Donations Feed */}
       <RecentDonations donations={recentDonations} />
+
+      {/* Notification Prompt */}
+      <NotificationPrompt />
     </div>
   );
 };

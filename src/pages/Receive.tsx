@@ -7,6 +7,9 @@ import { toast } from "sonner";
 import { useDonations } from "@/hooks/use-donations";
 import { DonationFilters } from "@/components/DonationFilters";
 import { DonationCard } from "@/components/DonationCard";
+import { DonationMap } from "@/components/DonationMap";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Map, List } from "lucide-react";
 
 const Receive = () => {
   const navigate = useNavigate();
@@ -91,32 +94,49 @@ const Receive = () => {
             </div>
           </Card>
 
-          {/* Donations List */}
-          <div className="space-y-6">
-            {filteredDonations.length === 0 ? (
-              <Card className="border-2 border-dashed border-primary/20 p-12 text-center">
-                <Package className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
-                <h3 className="mb-2 text-xl font-semibold text-foreground">No donations found</h3>
-                <p className="text-muted-foreground">
-                  {searchQuery ? "Try adjusting your search" : "Check back soon for new donations"}
-                </p>
-              </Card>
-            ) : (
-              filteredDonations.map((donation, idx) => (
-                <div 
-                  key={donation.id}
-                  className="animate-fade-in"
-                  style={{ animationDelay: `${idx * 100}ms` }}
-                >
-                  <DonationCard
-                    donation={donation}
-                    onClaim={handleClaim}
-                    isClaimed={claimedIds.includes(donation.id) || donation.status === "claimed"}
-                  />
-                </div>
-              ))
-            )}
-          </div>
+          {/* Donations List/Map View */}
+          <Tabs defaultValue="list" className="space-y-6">
+            <TabsList className="grid w-full max-w-md grid-cols-2">
+              <TabsTrigger value="list" className="gap-2">
+                <List className="h-4 w-4" />
+                List View
+              </TabsTrigger>
+              <TabsTrigger value="map" className="gap-2">
+                <Map className="h-4 w-4" />
+                Map View
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="list" className="space-y-6">
+              {filteredDonations.length === 0 ? (
+                <Card className="border-2 border-dashed border-primary/20 p-12 text-center">
+                  <Package className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
+                  <h3 className="mb-2 text-xl font-semibold text-foreground">No donations found</h3>
+                  <p className="text-muted-foreground">
+                    {searchQuery ? "Try adjusting your search" : "Check back soon for new donations"}
+                  </p>
+                </Card>
+              ) : (
+                filteredDonations.map((donation, idx) => (
+                  <div 
+                    key={donation.id}
+                    className="animate-fade-in"
+                    style={{ animationDelay: `${idx * 100}ms` }}
+                  >
+                    <DonationCard
+                      donation={donation}
+                      onClaim={handleClaim}
+                      isClaimed={claimedIds.includes(donation.id) || donation.status === "claimed"}
+                    />
+                  </div>
+                ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="map">
+              <DonationMap donations={filteredDonations} onClaimDonation={handleClaim} />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

@@ -33,7 +33,7 @@ const Index = () => {
             </div>
             
             <h1 className="mb-6 bg-gradient-to-r from-primary via-primary-glow to-secondary bg-clip-text text-5xl font-bold tracking-tight text-transparent md:text-7xl">
-              Food Waste to Feed
+              Feedit
             </h1>
             
             <p className="mb-8 text-xl text-muted-foreground md:text-2xl">

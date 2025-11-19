@@ -18,11 +18,15 @@ const Receive = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [claimedIds, setClaimedIds] = useState<string[]>([]);
 
-  const handleClaim = (id: string) => {
-    claimDonation(id, "NGO User");
-    setClaimedIds([...claimedIds, id]);
-    const donation = donations.find(d => d.id === id);
-    toast.success(`Claimed successfully! Contact: ${donation?.contact}`);
+  const handleClaim = async (id: string) => {
+    try {
+      await claimDonation(id as any, "NGO User");
+      setClaimedIds([...claimedIds, id]);
+      const donation = donations.find(d => d._id === id);
+      toast.success(`Claimed successfully! Contact: ${donation?.contact}`);
+    } catch (error) {
+      toast.error("Failed to claim donation");
+    }
   };
 
   const handleRating = (id: string, rating: number, comment: string) => {
@@ -134,14 +138,14 @@ const Receive = () => {
               ) : (
                 filteredDonations.map((donation, idx) => (
                   <div 
-                    key={donation.id}
+                    key={donation._id}
                     className="animate-fade-in"
                     style={{ animationDelay: `${idx * 100}ms` }}
                   >
                     <DonationCard
                       donation={donation}
                       onClaim={handleClaim}
-                      isClaimed={claimedIds.includes(donation.id) || donation.status === "claimed"}
+                      isClaimed={claimedIds.includes(donation._id) || donation.status === "claimed"}
                       onRate={handleRating}
                     />
                   </div>

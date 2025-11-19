@@ -21,14 +21,14 @@ export const DonationCard = ({ donation, onClaim, isClaimed, onRate }: DonationC
   const handleClaim = () => {
     setIsAnimating(true);
     setTimeout(() => {
-      onClaim(donation.id);
+      onClaim(donation._id);
       setShowRatingStars(true);
     }, 500);
   };
 
   const handleRating = (rating: number) => {
     if (onRate) {
-      onRate(donation.id, rating, "");
+      onRate(donation._id, rating, "");
       setShowRatingStars(false);
     }
   };

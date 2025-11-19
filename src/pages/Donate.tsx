@@ -14,44 +14,49 @@ const Donate = () => {
   const { sendNotification } = useNotifications();
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (data: any) => {
-    // Parse coordinates from location field if available
-    let coordinates = undefined;
-    if (data.location) {
-      const coordMatch = data.location.match(/(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/);
-      if (coordMatch) {
-        coordinates = {
-          lat: parseFloat(coordMatch[1]),
-          lng: parseFloat(coordMatch[2]),
-        };
+  const handleSubmit = async (data: any) => {
+    try {
+      // Parse coordinates from location field if available
+      let coordinates = undefined;
+      if (data.location) {
+        const coordMatch = data.location.match(/(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/);
+        if (coordMatch) {
+          coordinates = {
+            lat: parseFloat(coordMatch[1]),
+            lng: parseFloat(coordMatch[2]),
+          };
+        }
       }
+
+      await addDonation({
+        foodType: data.foodType,
+        quantity: data.quantity,
+        location: data.address, // Use the address field as the main location
+        coordinates,
+        pickupBy: data.pickupBy,
+        contact: data.contact,
+        description: data.description,
+        imageUrl: data.imageUrl,
+        donorVerified: true,
+        donorRating: 4.5,
+      });
+
+      setSubmitted(true);
+      toast.success("Your donation has been listed! NGOs will be notified.");
+      
+      // Send browser notification
+      sendNotification(
+        "New Donation Listed!",
+        `${data.foodType} - ${data.quantity} available at ${data.address}`
+      );
+      
+      setTimeout(() => {
+        navigate('/');
+      }, 3000);
+    } catch (error) {
+      toast.error("Failed to add donation. Please try again.");
+      console.error(error);
     }
-
-    addDonation({
-      foodType: data.foodType,
-      quantity: data.quantity,
-      location: data.address, // Use the address field as the main location
-      coordinates,
-      pickupBy: data.pickupBy,
-      contact: data.contact,
-      description: data.description,
-      imageUrl: data.imageUrl,
-      donorVerified: true,
-      donorRating: 4.5,
-    });
-
-    setSubmitted(true);
-    toast.success("Your donation has been listed! NGOs will be notified.");
-    
-    // Send browser notification
-    sendNotification(
-      "New Donation Listed!",
-      `${data.foodType} - ${data.quantity} available at ${data.address}`
-    );
-    
-    setTimeout(() => {
-      navigate('/');
-    }, 3000);
   };
 
   if (submitted) {

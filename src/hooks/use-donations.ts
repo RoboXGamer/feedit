@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { Id } from "../../convex/_generated/dataModel";
 
 export interface Donation {
-  id: string;
+  _id: Id<"donations">;
   foodType: string;
   quantity: string;
   location: string;
@@ -19,46 +21,27 @@ export interface Donation {
   reviews?: { rating: number; comment: string; reviewedAt: string }[];
 }
 
-const STORAGE_KEY = "food_donations";
-
 export const useDonations = () => {
-  const [donations, setDonations] = useState<Donation[]>([]);
+  const donations = useQuery(api.donations.list) ?? [];
+  const addMutation = useMutation(api.donations.add);
+  const claimMutation = useMutation(api.donations.claim);
 
-  useEffect(() => {
-    loadDonations();
-  }, []);
-
-  const loadDonations = () => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      setDonations(JSON.parse(stored));
+  const addDonation = async (donation: Omit<Donation, "_id" | "status" | "postedAt">) => {
+    try {
+      await addMutation(donation);
+    } catch (error) {
+      console.error("Failed to add donation:", error);
+      throw error;
     }
   };
 
-  const saveDonations = (newDonations: Donation[]) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newDonations));
-    setDonations(newDonations);
-  };
-
-  const addDonation = (donation: Omit<Donation, "id" | "status" | "postedAt">) => {
-    const newDonation: Donation = {
-      ...donation,
-      id: Date.now().toString(),
-      status: "available",
-      postedAt: new Date().toISOString(),
-    };
-    const updated = [...donations, newDonation];
-    saveDonations(updated);
-    return newDonation;
-  };
-
-  const claimDonation = (id: string, claimedBy: string) => {
-    const updated = donations.map((d) =>
-      d.id === id
-        ? { ...d, status: "claimed" as const, claimedBy, claimedAt: new Date().toISOString() }
-        : d
-    );
-    saveDonations(updated);
+  const claimDonation = async (id: Id<"donations">, claimedBy: string) => {
+    try {
+      await claimMutation({ id, claimedBy });
+    } catch (error) {
+      console.error("Failed to claim donation:", error);
+      throw error;
+    }
   };
 
   const getStats = () => {

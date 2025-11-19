@@ -60,7 +60,7 @@ export const DonationMap = ({ donations, onClaimDonation }: DonationMapProps) =>
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Contact Details</h3>
             {donations.map((donation) => (
-              <Card key={donation.id} className="p-4">
+              <Card key={donation._id} className="p-4">
                 <div className="space-y-3">
                   <div className="flex items-start justify-between">
                     <div>
@@ -93,7 +93,7 @@ export const DonationMap = ({ donations, onClaimDonation }: DonationMapProps) =>
                       <Button
                         size="sm"
                         className="flex-1"
-                        onClick={() => onClaimDonation(donation.id)}
+                        onClick={() => onClaimDonation(donation._id)}
                       >
                         Claim Donation
                       </Button>
@@ -136,7 +136,7 @@ export const DonationMap = ({ donations, onClaimDonation }: DonationMapProps) =>
           />
           {donationsWithCoords.map((donation) => (
             <Marker
-              key={donation.id}
+              key={donation._id}
               position={[donation.coordinates!.lat, donation.coordinates!.lng]}
             >
               <Popup maxWidth={300}>
@@ -168,7 +168,7 @@ export const DonationMap = ({ donations, onClaimDonation }: DonationMapProps) =>
                     <Button
                       size="sm"
                       className="w-full"
-                      onClick={() => onClaimDonation(donation.id)}
+                      onClick={() => onClaimDonation(donation._id)}
                     >
                       Claim Donation
                     </Button>

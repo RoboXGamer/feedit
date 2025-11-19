@@ -38,7 +38,7 @@ export const RecentDonations = ({ donations }: RecentDonationsProps) => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {donations.map((donation, idx) => (
             <Card
-              key={donation.id}
+              key={donation._id}
               className="border-2 border-primary/20 bg-card/50 p-4 backdrop-blur-sm transition-all hover:scale-105 hover:border-primary/40 hover:shadow-lg cursor-pointer animate-fade-in"
               style={{ animationDelay: `${idx * 100}ms` }}
               onClick={() => navigate('/receive')}
